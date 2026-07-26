@@ -1,0 +1,36 @@
+---
+description: "Development rules for mcp-skill-publisher itself"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# mcp-skill-publisher Development Rules
+
+## Environment Requirements
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+- Git 2.x+
+
+## Code Style
+- Use CommonJS (`require`/`module.exports`) for CLI compatibility
+- Use `chalk` for all terminal output coloring
+- Use `ora` for all spinner/progress indicators
+- Error messages must suggest a remedy, not just report the error
+
+## Project Conventions
+- All source code in `src/`
+- CLI entry point in `bin/cli.js`
+- Templates in `templates/` with `.tpl` extension
+- Skills (meta-skills for this tool) in `skills/`
+- Configuration templates use `{{VARIABLE}}` placeholder syntax
+
+## Disabled / Forbidden
+- Do NOT use ES modules (`import`/`export`) in source — keep CommonJS
+- Do NOT commit `node_modules/`
+- Do NOT hardcode API keys or secrets
+- Do NOT modify `package.json` version manually — use `npm version`
+
+## Testing
+- Unit tests alongside source: `src/**/*.test.js`
+- Run all tests before commit: `npm test`
+- Integration test: `node bin/cli.js publish --dry-run`

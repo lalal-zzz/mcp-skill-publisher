@@ -1,0 +1,13 @@
+{
+  "name": "mcp-skill-publisher",
+  "description": "All-in-One Publisher & Registry Sync Tool for MCP Servers & Agent Skills. Auto-publish MCPs to NPM, Smithery.ai, Official MCP Registry & Glama, while converting Markdown Skills to Cursor Rules (.mdc) & Dify workflows via CLI & AI Slash Commands (/skill:deploy).",
+  "type": "stdio",
+  "command": "npx",
+  "args": ["mcp-skill-publisher", "publish"],
+  "env": {},
+  "capabilities": {
+    "tools": true,
+    "resources": false,
+    "prompts": false
+  }
+}

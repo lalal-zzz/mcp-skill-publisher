@@ -1,0 +1,20 @@
+name: mcp-skill-publisher
+description: All-in-One Publisher & Registry Sync Tool for MCP Servers & Agent Skills
+
+build:
+  command: echo "No build step — pure CLI tool"
+  runtime: node
+
+env: {}
+
+entryPoints:
+  - command: npx
+    args:
+      - mcp-skill-publisher
+      - publish
+
+healthCheck:
+  command: node
+  args:
+    - -e
+    - process.exit(0)
