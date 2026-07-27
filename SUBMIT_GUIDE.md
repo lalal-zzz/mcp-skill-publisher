@@ -8,15 +8,15 @@
 
 ## 平台 1：cursor.directory
 
-提交链接：https://cursor.directory/submit
+提交链接：https://cursor.directory/plugins/new
 
-提交内容（复制下方全部文本）：
----
-Name: mcp-skill-deployer
-Description: One-stop MCP & Skill compliance checker and multi-platform publisher. Auto-generates 9 platform formats and publishes to NPM, Smithery, GitHub, cursor.directory, Dify, GPT Store, Coze, FlowGPT, and more.
-File: 见仓库 .cursor/rules/mcp-skill-deployer.mdc
-Repo: https://github.com/lalal-zzz/mcp-skill-publisher
----
+操作步骤：
+  1. 点击上方链接进入提交页面
+  2. Plugin Name 填：MCP Skill Deployer
+  3. Description 填：One-stop MCP & Skill compliance checker and multi-platform publisher. Auto-generates 9 platform formats and publishes to NPM, Smithery, GitHub, cursor.directory, Dify, GPT Store, Coze, FlowGPT, and more.
+  4. Rules / Plugin Content：粘贴 .cursor/rules/mcp-skill-deployer.mdc 的完整内容
+  5. GitHub Repo 填：https://github.com/lalal-zzz/mcp-skill-publisher
+  6. 点击 Submit
 
 ## 平台 2：Dify Marketplace
 
