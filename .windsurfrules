@@ -1,0 +1,14 @@
+---
+description: Universal AI Agent Skill to inspect compliance, auto-scaffold metadata, test, package, and publish any MCP server or Agent Skill project to NPM, Smithery, Official MCP Registry, GitHub, cursor.directory, Dify Marketplace, OpenAI GPT Store, Coze Store, FlowGPT, PromptBase, and popular awesome-lists.
+globs: **/*
+alwaysApply: true
+---
+
+When user asks to inspect, package, or publish their MCP/Skill project:
+
+1. Run pre-flight audit (npm whoami, git status, package.json / SKILL.md validation)
+2. Auto-detect project type (MCP / Skill / hybrid)
+3. Generate all 9 platform export files (.mdc, .yml, .txt, .json, etc.)
+4. Run tests and security dry-run
+5. Publish to relevant registries (npm, Smithery, GitHub, etc.)
+6. Print full multi-platform summary report

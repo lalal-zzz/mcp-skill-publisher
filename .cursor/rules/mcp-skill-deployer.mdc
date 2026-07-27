@@ -1,0 +1,61 @@
+---
+description: Universal AI Agent Skill to inspect compliance, auto-scaffold metadata, test, package, and publish any MCP server or Agent Skill project to NPM, Smithery, Official MCP Registry, GitHub, cursor.directory, Dify Marketplace, OpenAI GPT Store, Coze Store, FlowGPT, PromptBase, and popular awesome-lists.
+globs: **/*
+alwaysApply: true
+---
+
+# 一站式 MCP & Skill 合规检查与全平台发布技能 (MCP & Skill Deployer)
+
+当用户请求"检查并发布项目"、"打包部署 MCP/Skill"或执行 `/mcp-skill-deployer` 时，请严格按照以下 SOP 自动化完成合规检查与全套发布管道。
+
+## 全平台导出总览
+
+本工具支持将项目一次性导出为以下所有平台格式：
+
+```
+mcp-skill-deployer
+       │
+       ├──> [1. CLI / GitHub] ────> skills/<name>/SKILL.md → npx skills add
+       ├──> [2. Cursor IDE] ───────> .cursor/rules/<name>.mdc → cursor.directory
+       ├──> [3. Dify 平台] ────────> workflows/<name>.yml → Dify Marketplace
+       ├──> [4. OpenAI GPTs] ─────> gpts/<name>-instructions.txt → GPT Store
+       ├──> [5. Coze 扣子] ───────> coze/<name>-bot.json → 扣子商店
+       ├──> [6. FlowGPT] ─────────> flowgpt/<name>.md → flowgpt.com
+       ├──> [7. PromptBase] ──────> promptbase/<name>.md → promptbase.com
+       ├──> [8. Windsurf] ────────> .windsurfrules → Windsurf Rules
+       └──> [9. Awesome Lists] ──> PR 模板 → GitHub awesome-* 仓库
+```
+
+## 阶段 0：基本合规性门禁检查
+
+在执行任何动作前，必须先执行环境检查：NPM 登录、Git 状态、网络连通性。
+
+## 阶段 1：项目类型自动识别
+
+自动判定项目模式：纯 MCP / 纯 Skill / MCP+Skill 混合。
+
+## 阶段 2：全平台格式自动导出
+
+自动生成 9 种平台格式文件：
+1. CLI/GitHub：skills/<name>/SKILL.md
+2. Cursor IDE：.cursor/rules/<name>.mdc
+3. Dify：workflows/<name>.yml
+4. OpenAI GPTs：gpts/<name>-instructions.txt
+5. Coze 扣子：coze/<name>-bot.json
+6. FlowGPT：flowgpt/<name>.md
+7. PromptBase：promptbase/<name>.md
+8. Windsurf：.windsurfrules
+9. Awesome Lists：awesome-prs/<name>.md
+
+## 阶段 3：测试与安全校验
+
+运行 npm test / pytest，打包安全审计。
+
+## 阶段 4：全网分发
+
+- 轨道 A（MCP）：NPM publish + Smithery + Anthropic Registry + Glama/mcp.so
+- 轨道 B（Skill）：Git Tag + 各平台安装/导入指令生成
+
+## 阶段 5：生成运维汇报
+
+输出包含所有平台文件路径、已执行发布动作、待手动执行的平台清单。

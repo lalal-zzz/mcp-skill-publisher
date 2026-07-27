@@ -1,0 +1,93 @@
+app:
+  name: mcp-skill-deployer
+  description: One-stop MCP & Skill compliance check and multi-platform publishing
+  mode: workflow
+kind: app
+version: 0.1.0
+workflow:
+  graph:
+    nodes:
+      - id: start
+        type: start
+      - id: preflight
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 0: Pre-flight Audit
+                Run `npm whoami`, `git status`, check network connectivity.
+                If MCP: validate package.json (name, version, bin).
+                If Skill: validate skills/<name>/SKILL.md structure and YAML frontmatter.
+      - id: inspection
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 1: Project Inspection
+                Determine mode: MCP-only, Skill-only, or hybrid.
+      - id: scaffold
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 2: Auto-Export
+                Generate: .cursor/rules/*.mdc, workflows/*.yml, gpts/*.txt,
+                coze/*.json, flowgpt/*.md, promptbase/*.md, .windsurfrules,
+                awesome-prs/*.md
+      - id: test
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 3: Testing
+                Run npm test or pytest. Run npm pack --dry-run for security audit.
+      - id: publish
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 4: Publish
+                - MCP Track A: npm publish, Smithery.ai, Anthropic Registry
+                - Skill Track B: git tag, push to GitHub, generate install commands
+      - id: summary
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 5: Summary
+                Report compliance status, published versions, installation code snippets.
+      - id: end
+        type: end
+    edges:
+      - source: start
+        target: preflight
+      - source: preflight
+        target: inspection
+      - source: inspection
+        target: scaffold
+      - source: scaffold
+        target: test
+      - source: test
+        target: publish
+      - source: publish
+        target: summary
+      - source: summary
+        target: end
