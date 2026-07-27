@@ -1,4 +1,6 @@
-# 一站式提交指南 — mcp-skill-deployer
+# 平台分发参考指南 — mcp-skill-deployer
+
+以下为**可选的手工提交参考**，用户可根据需要选择性地向各个平台提交，无需全部发布。
 
 ## 自动完成项
 - [x] GitHub Push

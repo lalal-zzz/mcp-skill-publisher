@@ -56,6 +56,31 @@ mcp-skill-deployer
   - 必须包含 `name:`（仅限小写字母、数字和连字符 `-`，如 `stock-diagnose`）；
   - 必须包含非空的 `description:`。
 
+### 4. 安全合规要求检查 (Security Compliance) — 强制执行
+以下为发布前的**强制安全门禁**，任何一项不通过必须暂停并指引用户修复：
+
+- [ ] **Cursor Rules 安全配置**：
+  - 检查 `.cursor/rules/*.mdc` 和 `.windsurfrules` 文件
+  - **禁止** `alwaysApply: true` 与 `globs: **/*` 同时出现（会导致 SOP 在所有上下文中常驻，增加误触发风险）
+  - 正确配置示例：`alwaysApply: false` + `globs: "**/package.json,**/skills/**"`（仅在相关项目中激活）
+  - *若不合规*：自动修正为安全默认值，或提示用户确认修改
+
+- [ ] **操作确认门禁 (Confirmation Gates)**：
+  - 检查 SKILL.md 中是否包含 `npm publish`、`git push`、`npx -y <第三方CLI>` 等写入/外发指令
+  - **每一条写入/外发指令前必须有明确的用户确认步骤**（如 "I'm about to run X. Proceed?"）
+  - *若不合规*：在 SKILL.md 的对应阶段自动插入确认门禁语句
+
+- [ ] **命名一致性检查**：
+  - 仓库名、Skill 名称（YAML `name:`）、插件列表名称应保持一致或具有明确的对应关系
+  - 避免仓库名与 Skill 内部标识名存在无文档说明的偏差
+  - *若存在偏差*：提示用户在 README 中说明对应关系
+
+- [ ] **批量发布与灌水检查**：
+  - 检查是否存在自动向多个平台批量提交的脚本或指令（如自动 PR 提交、批量商店上架）
+  - 多平台分发应生成**手工提交指南**而非自动执行脚本
+  - 每个平台的提交应由用户手动确认并操作
+  - *若不合规*：将自动批量提交逻辑替换为「生成提交指南 + 用户手动确认」模式
+
 ---
 
 ## 阶段 1：项目类型自动识别 (Project Inspection)
@@ -171,36 +196,47 @@ mcp-skill-deployer
 
 ## 阶段 4：执行打包与全网分发 (Execution & Distribution)
 
+**⚠️ 强制安全规则：所有写入/外发操作（npm publish、git push、npx 第三方 CLI、注册表提交等）必须在执行前获得用户逐项明确确认。禁止自动批量执行。**
+
 ### 轨道 A：执行 MCP 全网发布
-1. **NPM 发布**：
+1. **NPM 发布**（需逐项确认）：
+   先询问用户：「即将执行 `npm version patch` 升级版本号并 `npm publish --access public` 发布到 NPM，是否继续？」
+   用户确认后执行：
    ```bash
    npm version patch --no-git-tag-version
    npm publish --access public
    ```
-2. **提交至 Smithery.ai**：
+2. **提交至 Smithery.ai**（需逐项确认）：
+   先询问用户：「即将执行 `npx @smithery/cli mcp publish` 提交到 Smithery.ai，是否继续？」
+   用户确认后执行：
    ```bash
    npx -y @smithery/cli mcp publish .
    ```
-3. **提交至 Anthropic 官方注册表**：
+3. **提交至 Anthropic 官方注册表**（需逐项确认）：
+   先询问用户：「即将执行 `npx @modelcontextprotocol/registry-cli publish` 提交到 Anthropic 注册表，是否继续？」
+   用户确认后执行：
    ```bash
    npx -y @modelcontextprotocol/registry-cli publish
    ```
 4. **输出 Glama.ai / mcp.so** 自动索引提交链接。
 
 ### 轨道 B：执行 Skill 全网发布
-1. **GitHub Release / Tag**：提示并协助用户推送 Git Tag。
+1. **GitHub Release / Tag**（需逐项确认）：
+   先询问用户：「即将执行 `git tag` 并 `git push` 推送到远程仓库，是否继续？」
+   用户确认后执行：
    ```bash
    git tag v<version> -m "<description>"
    git push origin v<version>
    ```
-2. **生成各平台安装指令**：
+2. **生成各平台手工提交指南**（仅生成指南文件，不自动提交）：
+   生成 `SUBMIT_GUIDE.md` 文件，包含各平台的**手动操作步骤和所需内容**，由用户自行决定去哪些平台提交：
    - CLI：`npx skills add https://github.com/用户/仓库`
-   - Cursor：提示将 `.mdc` 文件提交至 `cursor.directory`
-   - Dify：提示将 `.yml` 导入 Dify 并上架商店
-   - GPTs：提示复制 `gpts/` 目录下的 Instructions 文本创建 Custom GPT
-   - Coze：提示导入 `coze/` 下的 JSON 至扣子商店
-   - FlowGPT / PromptBase：提示复制 Markdown 至对应平台发布
-   - Awesome Lists：提示复制 PR 模板提交至目标仓库
+   - Cursor：提供 `.mdc` 文件路径，引导用户手动访问 `cursor.directory/plugins/new` 提交
+   - Dify：提供 `.yml` 文件路径，引导用户在 Dify Studio 手动导入
+   - GPTs：提供 `gpts/` 目录下的 Instructions 文本，供用户手动创建 Custom GPT
+   - Coze：提供 `coze/` 下的 JSON，引导用户在扣子平台手动导入
+   - FlowGPT / PromptBase：提供 Markdown 内容，供用户手动复制发布
+   - Awesome Lists：提供 PR 模板文本，供用户手动提交
 
 ---
 
