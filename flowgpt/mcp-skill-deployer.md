@@ -25,7 +25,7 @@ The agent will:
 2. Auto-detect your project type (MCP / Skill / hybrid)
 3. Auto-generate all 9 platform-specific files
 4. Run tests and security audits
-5. Publish to NPM, Smithery, GitHub — and give you ready-to-submit files for all other platforms
+5. Ask for confirmation before each publish/push, then execute NPM, Smithery, GitHub publishing — and give you ready-to-submit files for all other platforms
 
 ## Interaction Guide
 

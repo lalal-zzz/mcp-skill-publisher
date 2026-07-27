@@ -46,8 +46,16 @@ Generate all 9 platform formats:
 
 ### Phase 4: Multi-Registry Publishing
 
-Track A (MCP): npm publish, Smithery.ai, Anthropic Registry, Glama/mcp.so
-Track B (Skill): git tag, GitHub push, generate per-platform install commands
+**MANDATORY: Before EVERY write/send operation, ask the user "I'm about to [action]. Proceed? (yes/no)". Never execute without explicit approval.**
+
+Track A (MCP) — per-step confirmation required:
+- Ask: "Publish to npm?" → `npm publish`
+- Ask: "Submit to Smithery.ai?" → `npx @smithery/cli publish`
+- Ask: "Submit to Anthropic Registry?" → `npx @modelcontextprotocol/registry-cli publish`
+
+Track B (Skill) — per-step confirmation required:
+- Ask: "Create git tag and push?" → `git tag` + `git push`
+- Generate per-platform install commands and manual submission guides only (never auto-submit to platforms)
 
 ### Phase 5: Summary
 

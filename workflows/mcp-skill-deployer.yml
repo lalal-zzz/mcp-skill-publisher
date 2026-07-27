@@ -61,9 +61,11 @@ workflow:
             name: gpt-4
           prompt_template:
             - text: |
-                ## Phase 4: Publish
-                - MCP Track A: npm publish, Smithery.ai, Anthropic Registry
-                - Skill Track B: git tag, push to GitHub, generate install commands
+                ## Phase 4: Publish (MANDATORY per-step confirmation)
+                - Before ANY write operation, ask user: "I'm about to [action]. Proceed? (yes/no)"
+                - MCP Track A (confirm each): npm publish, Smithery.ai, Anthropic Registry
+                - Skill Track B (confirm each): git tag, push to GitHub, generate install commands
+                - Never auto-execute registry or git write operations
       - id: summary
         type: llm
         data:

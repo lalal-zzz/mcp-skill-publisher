@@ -106,11 +106,12 @@ mcp-skill-deployer
   ```yaml
   ---
   description: <skill description>
-  globs: **/*
-  alwaysApply: true
+  globs: "**/package.json,**/skills/**"
+  alwaysApply: false
   ---
   ```
   后跟 SKILL.md 的正文内容（去除原有 YAML frontmatter）
+- **安全约束**：禁止生成 `alwaysApply: true` 与 `globs: **/*` 的组合；必须使用范围化的 globs 并保持 `alwaysApply: false`
 - 提示用户可提交至 `cursor.directory` 获取全球曝光
 
 ### 平台 3：Dify Marketplace

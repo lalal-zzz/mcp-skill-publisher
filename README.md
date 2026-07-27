@@ -4,12 +4,14 @@
 
 An all-in-one Universal Agent Skill (`SKILL.md`) that automates pre-flight compliance audits, metadata scaffolding, testing, packaging, and multi-registry publishing for both **MCP Servers** and **Agent Skills**.
 
+**Note:** The repository is named `mcp-skill-publisher` (the tool/project name), while the skill identifier is `mcp-skill-deployer` (the agent skill name). Both refer to the same project — `mcp-skill-deployer` is the skill you invoke in agents; `mcp-skill-publisher` is the repository that ships it.
+
 ---
 
 ## Installation / 安装
 
 ```bash
-npx skills add https://github.com/YOUR_GITHUB_USERNAME/mcp-skill-publisher
+npx skills add https://github.com/lalal-zzz/mcp-skill-publisher
 ```
 
 ---
