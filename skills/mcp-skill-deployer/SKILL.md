@@ -1,11 +1,31 @@
 ---
 name: mcp-skill-deployer
-description: Universal AI Agent Skill to inspect compliance, auto-scaffold metadata, test, package, and publish any MCP server or Agent Skill project to NPM, Smithery, Official MCP Registry, and GitHub.
+description: Universal AI Agent Skill to inspect compliance, auto-scaffold metadata, test, package, and publish any MCP server or Agent Skill project to NPM, Smithery, Official MCP Registry, GitHub, cursor.directory, Dify Marketplace, OpenAI GPT Store, Coze Store, FlowGPT, PromptBase, and popular awesome-lists.
 ---
 
-# 一站式 MCP & Skill 合规检查与全网发布技能 (MCP & Skill Deployer)
+# 一站式 MCP & Skill 合规检查与全平台发布技能 (MCP & Skill Deployer)
 
-当用户请求"检查并发布项目"、"打包部署 MCP/Skill"或执行 `/mcp-skill-deployer` 时，请严格按照以下 SOP 自动化完成合规检查与全套发布管道：
+当用户请求"检查并发布项目"、"打包部署 MCP/Skill"或执行 `/mcp-skill-deployer` 时，请严格按照以下 SOP 自动化完成合规检查与全套发布管道。
+
+---
+
+## 全平台导出总览
+
+本工具支持将项目一次性导出为以下所有平台格式：
+
+```
+mcp-skill-deployer
+       │
+       ├──> [1. CLI / GitHub] ────> skills/<name>/SKILL.md → npx skills add
+       ├──> [2. Cursor IDE] ───────> .cursor/rules/<name>.mdc → cursor.directory
+       ├──> [3. Dify 平台] ────────> workflows/<name>.yml → Dify Marketplace
+       ├──> [4. OpenAI GPTs] ─────> gpts/<name>-instructions.txt → GPT Store
+       ├──> [5. Coze 扣子] ───────> coze/<name>-bot.json → 扣子商店
+       ├──> [6. FlowGPT] ─────────> flowgpt/<name>.md → flowgpt.com
+       ├──> [7. PromptBase] ──────> promptbase/<name>.md → promptbase.com
+       ├──> [8. Windsurf] ────────> .windsurfrules → Windsurf Rules
+       └──> [9. Awesome Lists] ──> PR 模板 → GitHub awesome-* 仓库
+```
 
 ---
 
@@ -47,18 +67,96 @@ description: Universal AI Agent Skill to inspect compliance, auto-scaffold metad
 
 ---
 
-## 阶段 2：缺失配置文件自动修复与补全 (Auto-Scaffolding)
+## 阶段 2：全平台格式自动导出 (Multi-Platform Auto-Export)
 
-若基本检查通过但缺少部分扩展配置文件，自动帮用户补全生成：
+根据项目类型，自动生成以下全部平台格式文件。**对于 Skill 项目，以下所有导出全部执行；对于 MCP 项目，执行 MCP 相关及适用的平台格式。**
 
-### 若含 MCP 项目：
-1. **自动生成 `smithery.yaml`**（若缺失）：生成 Smithery.ai 一键安装配置。
-2. **自动生成 `server.json`**（若缺失）：生成 Anthropic Official Registry 声明文件。
-3. **自动生成 `index.js`**（若为 Python MCP 且缺失 Node Shim）：生成拉起 Python 的 ESM 入口脚本。
+### 平台 1：CLI / GitHub 原生格式
+- 确保 `skills/<name>/SKILL.md` 已存在且合规
+- 生成包含一键安装指令的 README.md 更新
 
-### 若含 Skill 项目：
-1. **自动转换导出 Cursor Rules**：在 `.cursor/rules/` 下生成 `.mdc` 规则文件。
-2. **自动转换导出 Dify 工作流**：解析 Prompt 并导出 `dify_workflow.yml`。
+### 平台 2：Cursor IDE + cursor.directory
+- **输出路径**：`.cursor/rules/<skill-name>.mdc`
+- **生成规则**：将 SKILL.md 的 YAML frontmatter 转换为 Cursor `.mdc` 格式：
+  ```yaml
+  ---
+  description: <skill description>
+  globs: **/*
+  alwaysApply: true
+  ---
+  ```
+  后跟 SKILL.md 的正文内容（去除原有 YAML frontmatter）
+- 提示用户可提交至 `cursor.directory` 获取全球曝光
+
+### 平台 3：Dify Marketplace
+- **输出路径**：`workflows/<skill-name>.yml`
+- **生成规则**：将 SKILL.md 的每个阶段拆分为 Dify 工作流节点，按阶段顺序构建 Dify DSL：
+  ```yaml
+  app:
+    name: <skill-name>
+    mode: workflow
+  kind: app
+  version: 0.1.0
+  workflow:
+    graph:
+      nodes:
+        - id: start
+          type: start
+        - id: llm
+          type: llm
+          data:
+            model:
+              provider: openai
+              name: gpt-4
+            prompt_template:
+              - text: "<SKILL.md 完整 SOP 内容>"
+  ```
+- 提示用户可导入至 `dify.ai` 商店
+
+### 平台 4：OpenAI GPT Store
+- **输出路径**：`gpts/<skill-name>-instructions.txt`
+- **生成规则**：纯文本文件，内容为：
+  ```
+  # <skill-name>
+  <SKILL.md 正文去除 YAML frontmatter 的完整内容>
+
+  You must follow the above instructions step by step.
+  ```
+- 提示用户可在 ChatGPT 创建 Custom GPT 时粘贴此内容至 Instructions 字段
+
+### 平台 5：Coze 扣子商店
+- **输出路径**：`coze/<skill-name>-bot.json`
+- **生成规则**：生成 Coze Bot 配置 JSON：
+  ```json
+  {
+    "name": "<skill-name>",
+    "description": "<skill description>",
+    "prompt": {
+      "system": "<SKILL.md 正文精简为 JSON-safe 字符串>"
+    }
+  }
+  ```
+- 提示用户可导入至 `coze.cn` 或 `coze.com`
+
+### 平台 6：FlowGPT
+- **输出路径**：`flowgpt/<skill-name>.md`
+- **生成规则**：Markdown 文件，内容是去除 YAML frontmatter 的 SKILL.md 正文，并附加一段 Interaction Guide 供 FlowGPT 用户直接使用
+
+### 平台 7：PromptBase
+- **输出路径**：`promptbase/<skill-name>.md`
+- **生成规则**：精简版 Markdown，头几行写售价建议（如 "Free"），后跟技能描述和核心 Prompt
+
+### 平台 8：Windsurf Rules
+- **输出路径**：`.windsurfrules`
+- **生成规则**：与 Cursor `.mdc` 格式相同，但文件名为 `.windsurfrules`，放置在项目根目录
+
+### 平台 9：Awesome Lists PR 模板
+- **输出路径**：`awesome-prs/<skill-name>.md`
+- **生成规则**：生成一个 PR 说明 Markdown 文件，包含：
+  - Skill 名称与一句话描述
+  - GitHub 仓库链接
+  - 适用于哪些 awesome 列表（`f/awesome-chatgpt-prompts`、`awesome-cursorrules`、`awesome-agent-skills`）
+  - 供用户直接复制粘贴提交 PR 的链接和文本
 
 ---
 
@@ -91,14 +189,59 @@ description: Universal AI Agent Skill to inspect compliance, auto-scaffold metad
 
 ### 轨道 B：执行 Skill 全网发布
 1. **GitHub Release / Tag**：提示并协助用户推送 Git Tag。
-2. **生成安装指令**：在用户 `README.md` 中生成专属一键安装代码：
-   `npx skills add https://github.com/用户/用户仓库`
+   ```bash
+   git tag v<version> -m "<description>"
+   git push origin v<version>
+   ```
+2. **生成各平台安装指令**：
+   - CLI：`npx skills add https://github.com/用户/仓库`
+   - Cursor：提示将 `.mdc` 文件提交至 `cursor.directory`
+   - Dify：提示将 `.yml` 导入 Dify 并上架商店
+   - GPTs：提示复制 `gpts/` 目录下的 Instructions 文本创建 Custom GPT
+   - Coze：提示导入 `coze/` 下的 JSON 至扣子商店
+   - FlowGPT / PromptBase：提示复制 Markdown 至对应平台发布
+   - Awesome Lists：提示复制 PR 模板提交至目标仓库
 
 ---
 
 ## 阶段 5：生成运维汇报 (Final Summary)
 
-向用户汇报发布结果：
-- ✅ 合规检查状态；
-- 🚀 已发布的 NPM 版本与四大注册中心提交状态；
-- 📦 供消费者复制使用的 Claude Desktop / Cursor / Dify 配置代码片段。
+向用户汇报完整发布结果：
+
+```
+========================================
+ 🚀 全平台发布结果汇总
+========================================
+
+ 📦 项目名称：<project-name>
+ 🔍 项目类型：<MCP / Skill / 混合>
+
+ ✅ 合规检查：通过
+
+ 📁 已生成的平台文件：
+   [1] skills/<name>/SKILL.md         → npx skills add
+   [2] .cursor/rules/<name>.mdc       → cursor.directory
+   [3] workflows/<name>.yml           → Dify Marketplace
+   [4] gpts/<name>-instructions.txt   → OpenAI GPT Store
+   [5] coze/<name>-bot.json           → Coze 扣子商店
+   [6] flowgpt/<name>.md              → flowgpt.com
+   [7] promptbase/<name>.md           → promptbase.com
+   [8] .windsurfrules                 → Windsurf IDE
+   [9] awesome-prs/<name>.md          → Awesome Lists PR
+
+ 🚀 已执行的发布动作：
+   [√] GitHub Push
+   [√] Git Tag v<version>
+   [√] NPM Publish (MCP only)
+   [√] Smithery.ai 提交 (MCP only)
+
+ 📋 待用户手动执行（需登录对应平台）：
+   [ ] cursor.directory 提交
+   [ ] Dify Marketplace 上架
+   [ ] GPT Store 发布
+   [ ] 扣子商店 上架
+   [ ] FlowGPT 发布
+   [ ] PromptBase 发布
+   [ ] Awesome Lists PR 提交
+========================================
+```
