@@ -1,6 +1,6 @@
 app:
   name: mcp-skill-deployer
-  description: One-stop MCP & Skill compliance check and multi-platform publishing
+  description: One-stop MCP & Skill quality audit, guided optimization, and multi-platform publishing
   mode: workflow
 kind: app
 version: 0.1.0
@@ -18,8 +18,9 @@ workflow:
           prompt_template:
             - text: |
                 ## Phase 0: Pre-flight Audit
-                Run `npm whoami`, `git status`, check network connectivity.
-                If MCP: validate package.json (name, version, bin).
+                Run `npm whoami` (publish mode only), `git status`, check network connectivity.
+                Scan project files for leaked secrets (API keys, tokens, .env content).
+                If MCP: validate package.json (name, version, bin) and LICENSE file.
                 If Skill: validate skills/<name>/SKILL.md structure and YAML frontmatter.
       - id: inspection
         type: llm
@@ -31,6 +32,34 @@ workflow:
             - text: |
                 ## Phase 1: Project Inspection
                 Determine mode: MCP-only, Skill-only, or hybrid.
+      - id: quality_audit
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 2: Quality Audit & Scoring (100 points, 10 items x 10 pts)
+                MCP: tool naming, tool descriptions (what+when+I/O), parameter schemas,
+                tool count restraint, error handling, token-efficient responses,
+                README completeness, registry metadata, security design, runnability.
+                Skill: description triggerability, name convention, body length (<=500 lines),
+                instruction executability, trigger boundaries, examples, error branches,
+                no environment assumptions, confirmation gates, metadata consistency.
+                Output: total score, A/B/C/D grade, prioritized fix list with concrete fixes.
+      - id: optimize
+        type: llm
+        data:
+          model:
+            provider: openai
+            name: gpt-4
+          prompt_template:
+            - text: |
+                ## Phase 3: Optimization (per-item confirmation)
+                For each issue: show file, reason, and diff preview; apply only after approval.
+                Priority: blockers -> high-impact -> polish. Never change core functionality.
+                Re-score after fixes and show before/after comparison.
       - id: scaffold
         type: llm
         data:
@@ -39,10 +68,10 @@ workflow:
             name: gpt-4
           prompt_template:
             - text: |
-                ## Phase 2: Auto-Export
+                ## Phase 4: Auto-Export
                 Generate: .cursor/rules/*.mdc, workflows/*.yml, gpts/*.txt,
                 coze/*.json, flowgpt/*.md, promptbase/*.md, .windsurfrules,
-                awesome-prs/*.md
+                awesome-prs/*.md. Ask before overwriting existing files.
       - id: test
         type: llm
         data:
@@ -51,7 +80,7 @@ workflow:
             name: gpt-4
           prompt_template:
             - text: |
-                ## Phase 3: Testing
+                ## Phase 5: Testing
                 Run npm test or pytest. Run npm pack --dry-run for security audit.
       - id: publish
         type: llm
@@ -61,10 +90,11 @@ workflow:
             name: gpt-4
           prompt_template:
             - text: |
-                ## Phase 4: Publish (MANDATORY per-step confirmation)
+                ## Phase 6: Publish (MANDATORY per-step confirmation)
                 - Before ANY write operation, ask user: "I'm about to [action]. Proceed? (yes/no)"
                 - MCP Track A (confirm each): npm publish, Smithery.ai, Anthropic Registry
                 - Skill Track B (confirm each): git tag, push to GitHub, generate install commands
+                - Other store platforms: generate manual submission guides only
                 - Never auto-execute registry or git write operations
       - id: summary
         type: llm
@@ -74,8 +104,9 @@ workflow:
             name: gpt-4
           prompt_template:
             - text: |
-                ## Phase 5: Summary
-                Report compliance status, published versions, installation code snippets.
+                ## Phase 7: Summary
+                Report compliance status, before/after quality score with grade,
+                published versions, installation code snippets, pending manual submissions.
       - id: end
         type: end
     edges:
@@ -84,6 +115,10 @@ workflow:
       - source: preflight
         target: inspection
       - source: inspection
+        target: quality_audit
+      - source: quality_audit
+        target: optimize
+      - source: optimize
         target: scaffold
       - source: scaffold
         target: test

@@ -1,33 +1,49 @@
 ---
-description: "mcp-skill-deployer: when the user explicitly asks to inspect, package, or publish an MCP server or Agent Skill project, run pre-flight compliance checks and generate export files. Never execute npm publish, git push, or registry commands without per-step user confirmation."
+description: "mcp-skill-deployer: when the user explicitly asks to audit, score, optimize, inspect, package, or publish an MCP server or Agent Skill project, run compliance checks, quality scoring, guided optimization, and export file generation. Never execute npm publish, git push, or registry commands without per-step user confirmation."
 globs: "**/package.json,**/skills/**"
 alwaysApply: false
 ---
 
 # mcp-skill-deployer
 
-Only activate when the user explicitly requests to inspect, package, or publish an MCP or Skill project (e.g., "/mcp-skill-deployer" or "check and publish my project").
+Only activate when the user explicitly requests to audit, optimize, inspect, package, or publish an MCP or Skill project (e.g., "/mcp-skill-deployer", "score my skill", "optimize my MCP", "check and publish my project").
+
+## Mode Selection
+Pick the mode from user intent — do NOT default to full publishing:
+- **Audit**: "check / score my project" → Phases 0-2 only (read-only report)
+- **Optimize**: "optimize / fix my project" → Phases 0-3 (edits require per-item confirmation)
+- **Publish**: "publish / release my project" → full pipeline (Phases 0-6)
 
 ## Phase 0: Pre-flight Audit
-- Run `npm whoami`, `git status` (read-only checks only)
+- Run `npm whoami` (publish mode only), `git status` (read-only checks only)
+- Scan for leaked secrets (API keys, tokens, .env content)
 - Validate `package.json` or `skills/*/SKILL.md` structure
 
 ## Phase 1: Project Inspection
 - Auto-detect: MCP-only / Skill-only / hybrid
 
-## Phase 2: Platform Export (read-only file generation)
+## Phase 2: Quality Audit & Scoring
+- Score against the 100-point checklist (MCP: tool naming/descriptions, schemas, error handling, token efficiency, registry metadata; Skill: description triggerability, length, executable steps, trigger boundaries, confirmation gates)
+- Output report: total score, A/B/C/D grade, prioritized fix list (blockers → high impact → polish)
+
+## Phase 3: Optimization (WITH PER-ITEM CONFIRMATION)
+- Show diff preview per fix, apply only after user approval
+- Never change core functionality or delete user content
+- Re-score after fixes and show before/after comparison
+
+## Phase 4: Platform Export (file generation)
 - Generate export files (.mdc, .yml, .txt, .json) for target platforms
 - Never overwrite existing user files without asking
 
-## Phase 3: Testing & Security
+## Phase 5: Testing & Security
 - Run `npm test` or `pytest`
 - Run `npm pack --dry-run` (dry-run only)
 
-## Phase 4: Publishing (WITH MANDATORY CONFIRMATION)
+## Phase 6: Publishing (WITH MANDATORY CONFIRMATION)
 - Before ANY write/send operation, ask the user: "I'm about to [action]. Proceed? (yes/no)"
 - **Track A (MCP)**: Ask confirmation before each: `npm publish`, Smithery submit, Anthropic registry submit
 - **Track B (Skill)**: Ask confirmation before each: `git tag`, `git push`
 - Never execute registry or git write operations without explicit user approval
 
-## Phase 5: Summary
-- Print read-only summary of what was checked and what export files were generated
+## Phase 7: Summary
+- Print read-only summary: compliance status, before/after quality score, export files generated, executed actions, pending manual submissions

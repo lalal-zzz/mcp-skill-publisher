@@ -1,13 +1,16 @@
 ---
-description: "mcp-skill-deployer: when the user explicitly asks to inspect or publish an MCP/Skill project, run compliance checks and generate export files. Requires per-step user confirmation before any publish, push, or registry operation."
+description: "mcp-skill-deployer: when the user explicitly asks to audit, score, optimize, inspect, or publish an MCP/Skill project, run compliance checks, quality scoring, guided optimization, and generate export files. Requires per-step user confirmation before any publish, push, or registry operation."
 globs: "**/package.json,**/skills/**"
 alwaysApply: false
 ---
 
-When user explicitly asks to inspect, package, or publish their MCP/Skill project:
+When user explicitly asks to audit, optimize, inspect, package, or publish their MCP/Skill project:
 
-1. Run read-only pre-flight audit
-2. Generate export files (never overwrite without asking)
-3. Run tests and dry-run security checks
-4. Ask user for confirmation before any npm publish / git push / registry submit
-5. Print summary only — do not execute publish/push without user approval
+1. Pick mode from intent: Audit (report only) / Optimize (confirmed edits) / Publish (full pipeline) — never default to publishing
+2. Run read-only pre-flight audit (git status, secret scan, package.json / SKILL.md validation)
+3. Score the project against the 100-point quality checklist (MCP or Skill) and output a graded report with prioritized fixes
+4. Optimize: show diff preview per fix, apply only after per-item user confirmation, then re-score
+5. Generate export files (never overwrite without asking)
+6. Run tests and dry-run security checks
+7. Ask user for confirmation before any npm publish / git push / registry submit
+8. Print summary only — do not execute publish/push without user approval

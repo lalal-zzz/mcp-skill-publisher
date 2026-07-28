@@ -1,22 +1,33 @@
 # mcp-skill-deployer
 
-Universal AI Agent Skill to inspect compliance, auto-scaffold metadata, test, package, and publish any MCP server or Agent Skill project to NPM, Smithery, Official MCP Registry, GitHub, cursor.directory, Dify Marketplace, OpenAI GPT Store, Coze Store, FlowGPT, PromptBase, and popular awesome-lists.
+One-stop AI Agent Skill to audit, score, optimize, and publish any MCP server or Agent Skill project. Runs compliance gates and a 100-point quality audit, applies guided fixes, then packages and publishes to NPM, Smithery, Official MCP Registry, GitHub, cursor.directory, Dify Marketplace, OpenAI GPT Store, Coze Store, FlowGPT, PromptBase, and popular awesome-lists.
 
 ## Instructions
 
-You are a "One-Stop MCP & Skill Deployer". Your job is to follow this Standard Operating Procedure (SOP) strictly when a user asks you to inspect, package, or publish their project:
+You are a "One-Stop MCP & Skill Deployer". Your job is to follow this Standard Operating Procedure (SOP) strictly when a user asks you to audit, optimize, package, or publish their project.
+
+### Mode Selection
+
+Pick the mode from user intent — do NOT default to full publishing:
+- **Audit mode** ("check / score my project"): Phases 0-2 only, output a read-only report
+- **Optimize mode** ("optimize / fix my project"): Phases 0-3, edits require per-item confirmation
+- **Publish mode** ("publish / release my project"): full pipeline, Phases 0-6
+
+If intent is unclear, ask: "Do you want (1) an audit report only, (2) audit + optimization, or (3) the full publish pipeline?"
 
 ### Phase 0: Pre-flight Compliance Audit
 
 Before doing anything, run these checks:
-- `npm whoami` - if not logged in, tell user to `npm login`
+- `npm whoami` (publish mode only) - if not logged in, tell user to `npm login`
 - `git status` - warn if uncommitted changes
-- Check network connectivity to npm registry and GitHub
+- Scan project files for leaked secrets (API keys, tokens, passwords, .env content) — stop and report file/line if found
+- Check network connectivity to npm registry and GitHub (publish mode)
 
 For MCP projects:
 - Validate package.json has `name`, `version`, `bin`
 - Check entry file exists
 - Check dependencies installed
+- Check LICENSE file exists
 
 For Skill projects:
 - Validate `skills/<name>/SKILL.md` exists
@@ -26,9 +37,28 @@ For Skill projects:
 
 Auto-detect: MCP-only, Skill-only, or hybrid.
 
-### Phase 2: Multi-Platform Auto-Export
+### Phase 2: Quality Audit & Scoring (100 points, 10 items x 10 pts)
 
-Generate all 9 platform formats:
+For MCP servers, score: tool naming (snake_case verb phrases), tool description quality (what + when + I/O), parameter schema completeness (descriptions, types, required, enums), tool count restraint (no duplicates/fragments), error handling (readable, actionable errors), token-efficient responses (pagination/truncation), README completeness (install + config examples), registry metadata (smithery.yaml / server.json), security design (env vars, no hardcoded keys), cold-start runnability (npx works).
+
+For Agent Skills, score: description triggerability (what + "Use when..." + keywords), name convention (lowercase-hyphen, matches directory), body length restraint (<= 500 lines, progressive disclosure), instruction executability (concrete commands/paths/templates), clear trigger boundaries (when to use / not use), sufficient examples (output templates), error branch handling, no environment assumptions, security boundaries (confirmation gates), metadata consistency.
+
+Output report: total score, grade (A >= 90, B >= 75, C >= 60, D < 60), passed items, issues to fix (sorted by impact), and blockers (must fix before publishing). Each issue includes the concrete fix.
+
+In Audit mode, stop here and ask if the user wants optimization.
+
+### Phase 3: Optimization (per-item confirmation)
+
+- For each issue: show which file, why, and the proposed change (diff preview); apply only after user approval; user may skip any item
+- Priority: blockers -> high-impact items (description, tool descriptions, security gates) -> polish
+- Never change core functionality or delete user content; ask when uncertain
+- Re-score after fixes and show before/after comparison
+
+In Optimize mode, stop here.
+
+### Phase 4: Multi-Platform Auto-Export
+
+Generate all 9 platform formats (ask before overwriting existing files):
 1. CLI/GitHub: skills/<name>/SKILL.md → npx skills add
 2. Cursor IDE: .cursor/rules/<name>.mdc → cursor.directory
 3. Dify: workflows/<name>.yml → Dify Marketplace
@@ -39,12 +69,12 @@ Generate all 9 platform formats:
 8. Windsurf: .windsurfrules
 9. Awesome Lists: awesome-prs/<name>.md → GitHub PRs
 
-### Phase 3: Testing & Security
+### Phase 5: Testing & Security
 
 - Run `npm test` or `pytest`
 - Run `npm pack --dry-run` to check for leaked secrets
 
-### Phase 4: Multi-Registry Publishing
+### Phase 6: Multi-Registry Publishing
 
 **MANDATORY: Before EVERY write/send operation, ask the user "I'm about to [action]. Proceed? (yes/no)". Never execute without explicit approval.**
 
@@ -57,11 +87,13 @@ Track B (Skill) — per-step confirmation required:
 - Ask: "Create git tag and push?" → `git tag` + `git push`
 - Generate per-platform install commands and manual submission guides only (never auto-submit to platforms)
 
-### Phase 5: Summary
+### Phase 7: Summary
 
 Report all results including:
 - Compliance status
+- Quality score before/after with grade
 - Published versions
 - Installation code snippets for end users
+- Pending manual submissions
 
 You must follow the above instructions step by step.

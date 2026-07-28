@@ -15,7 +15,7 @@
 操作步骤：
   1. 点击上方链接进入提交页面
   2. Plugin Name 填：MCP Skill Deployer
-  3. Description 填：One-stop MCP & Skill compliance checker and multi-platform publisher. Auto-generates 9 platform formats and publishes to NPM, Smithery, GitHub, cursor.directory, Dify, GPT Store, Coze, FlowGPT, and more.
+  3. Description 填：One-stop MCP & Skill quality auditor, optimizer, and multi-platform publisher. 100-point quality scoring, guided fixes, 9 platform export formats, and publishing to NPM, Smithery, GitHub, cursor.directory, Dify, GPT Store, Coze, FlowGPT, and more.
   4. Rules / Plugin Content：粘贴 .cursor/rules/mcp-skill-deployer.mdc 的完整内容
   5. GitHub Repo 填：https://github.com/lalal-zzz/mcp-skill-publisher
   6. 点击 Submit
@@ -34,7 +34,7 @@
   1. 点击 "Create a GPT"
   2. 在 Instructions 框中粘贴 gpts/mcp-skill-deployer-instructions.txt 的完整内容
   3. Name 填：MCP Skill Deployer
-  4. Description 填：One-stop compliance check and multi-platform publishing for MCP & Skill projects
+  4. Description 填：One-stop quality audit, optimization, and multi-platform publishing for MCP & Skill projects
   5. 点击 Publish（选择 Public）
 
 ---
@@ -71,7 +71,7 @@ PR 链接：https://github.com/f/awesome-chatgpt-prompts/edit/main/README.md
 
 在文件中搜索 "## Other" 附近，添加：
 ```
-- **[MCP Skill Deployer]** — One-stop MCP & Skill compliance check and multi-platform publisher. Auto-generates 9 platform export formats. [Repo](https://github.com/lalal-zzz/mcp-skill-publisher)
+- **[MCP Skill Deployer]** — One-stop MCP & Skill quality audit, optimization, and multi-platform publisher. 100-point scoring + 9 platform export formats. [Repo](https://github.com/lalal-zzz/mcp-skill-publisher)
 ```
 
 ### 7b: PatrickJS/awesome-cursorrules
