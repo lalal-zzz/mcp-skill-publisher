@@ -6,6 +6,8 @@
 - [x] GitHub Push
 - [x] Git Tag v1.0.3
 - [x] Qoder 本地插件安装完成
+- [x] PR: PatrickJS/awesome-cursorrules #341 (CI 全部通过)
+- [x] PR: e2b-dev/awesome-ai-agents #1314 (需签 CLA)
 
 ---
 
@@ -68,25 +70,16 @@
 ## 平台 7：Awesome Lists (PR 提交)
 
 ### 7a: f/awesome-chatgpt-prompts
-PR 链接：https://github.com/f/awesome-chatgpt-prompts/edit/main/README.md
-
-在文件中搜索 "## Other" 附近，添加：
-```
-- **[MCP Skill Deployer]** — One-stop MCP & Skill quality audit, optimization, and multi-platform publisher. 100-point scoring + 9 platform export formats. [Repo](https://github.com/lalal-zzz/mcp-skill-publisher)
-```
+状态：⏭️ 跳过（仓库已重构为 f/prompts.chat，不再适用）
 
 ### 7b: PatrickJS/awesome-cursorrules
-PR 链接：https://github.com/PatrickJS/awesome-cursorrules/edit/main/README.md
-
-在 .cursorrules 或 Cursor 相关分类下添加：
-```
-- [**mcp-skill-deployer**](https://github.com/lalal-zzz/mcp-skill-publisher) — Universal MCP & Skill publisher. Auto-exports to .mdc, .yml, .txt, .json for 9 platforms.
-```
+状态：✅ 已提交 PR #341 — https://github.com/PatrickJS/awesome-cursorrules/pull/341
+CI 检查：全部通过（rule-hygiene, readme-hygiene, repo-security 等）
+提交内容：rules/mcp-skill-deployer.mdc（rule 文件，非 README 直加）
+备注：按仓库 hygiene 规则，仅提交 rule 文件，由维护者决定是否加入 README 列表
 
 ### 7c: e2b-dev/awesome-ai-agents
-PR 链接：https://github.com/e2b-dev/awesome-ai-agents/edit/main/readme.md
-
-在 Agent 工具分类下添加：
-```
-- [mcp-skill-deployer](https://github.com/lalal-zzz/mcp-skill-publisher) — Agent skill that automates publishing MCP servers and skills to 9 platforms.
-```
+状态：✅ 已提交 PR #1314 — https://github.com/e2b-dev/awesome-ai-agents/pull/1314
+CI 检查：CLA 未签（需登录签名）
+待操作：点击 CLA 链接签署 Contributor License Agreement 后 CI 即通过
+提交内容：在 README.md 中按字母序添加了 mcp-skill-deployer 条目
