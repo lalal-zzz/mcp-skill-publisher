@@ -4,7 +4,8 @@
 
 ## 自动完成项
 - [x] GitHub Push
-- [x] Git Tag v1.0.0
+- [x] Git Tag v1.0.3
+- [x] Qoder 本地插件安装完成
 
 ---
 
